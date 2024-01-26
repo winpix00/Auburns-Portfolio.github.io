@@ -1,0 +1,59 @@
+# scripts/create_database.py
+import arcpy
+
+def create_gis_database(workspace, database_name):
+    arcpy.env.workspace = workspace
+    arcpy.CreateFileGDB_management(workspace, database_name)
+
+def create_power_lines_feature_class(database_path, feature_class_name):
+    spatial_reference = arcpy.SpatialReference(4326)  # WGS 1984
+    arcpy.CreateFeatureclass_management(
+        database_path,
+        feature_class_name,
+        "POLYLINE",
+        spatial_reference=spatial_reference
+    )
+
+if __name__ == "__main__":
+    workspace_path = r"C:\Path\To\Your"
+    database_name = "GISUtilitiesDatabase.gdb"
+    feature_class_name = "PowerLines"
+
+    create_gis_database(workspace_path, database_name)
+    create_power_lines_feature_class(f"{workspace_path}\\{database_name}", feature_class_name)
+# scripts/add_power_line.py
+import arcpy
+
+def add_power_line(feature_class, coordinates):
+    with arcpy.da.InsertCursor(feature_class, ["SHAPE@"]) as cursor:
+        array = arcpy.Array([arcpy.Point(*coord) for coord in coordinates])
+        polyline = arcpy.Polyline(array)
+        cursor.insertRow([polyline])
+
+if __name__ == "__main__":
+    workspace_path = r"C:\Path\To\Your"
+    database_name = "GISUtilitiesDatabase.gdb"
+    feature_class_name = "PowerLines"
+
+    arcpy.env.workspace = f"{workspace_path}\\{database_name}\\{feature_class_name}"
+
+    line_coordinates = [(-122.0, 34.0), (-121.5, 34.2)] 
+
+    add_power_line(feature_class_name, line_coordinates)
+# scripts/query_power_lines.py
+import arcpy
+
+def query_power_lines(feature_class):
+    with arcpy.da.SearchCursor(feature_class, ["SHAPE@"]) as cursor:
+        for row in cursor:
+            polyline = row[0]
+            print(f"Power Line Length: {polyline.length:.2f} meters")
+
+if __name__ == "__main__":
+    workspace_path = r"C:\Path\To\Your"
+    database_name = "GISUtilitiesDatabase.gdb"
+    feature_class_name = "PowerLines"
+
+    arcpy.env.workspace = f"{workspace_path}\\{database_name}\\{feature_class_name}"
+
+    query_power_lines(feature_class_name)
