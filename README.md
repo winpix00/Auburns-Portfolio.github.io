@@ -5,3 +5,5 @@ Professional Resume and Work Experience:
 Master Project: [Houston Flood Analysis](https://github.com/winpix00/Auburns-Portfolio.github.io/tree/HoustonFloodAnalysis)
 
 Coding: [Projects](https://github.com/winpix00/CodingProjects)
+
+Past: [Course Work](https://github.com/winpix00/Auburns-Portfolio.github.io/tree/Course-Work)
